@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Course Recommender System</title>
+
+  <!-- Bootstrap CSS (optional) -->
+  <link
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+  >
+
+  <!-- Your Custom Styles -->
+  <style>
+    /* 1) Make html/body span full height */
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
+    /* 2) Page background image—no fallback color */
+    body {
+      background:
+        linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+        url('https://images.unsplash.com/photo-1530919048397-f5a2b3efecb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1080&q=80')
+        no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #fff;
+      padding-top: 50px;
+    }
+
+    /* 3) Dark, semi-transparent content container */
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background-color: rgba(0, 0, 0, 0.85);
+      padding: 30px;
+      border-radius: 10px;
+    }
+
+    /* 4) Headings and link colors */
+    h1, h2, h4 {
+      color: #ffc107;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    a {
+      color: #17a2b8;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* 5) Form controls */
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      margin: 12px 0;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      background-color: #fff;
+      color: #000;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    }
+    button.btn {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      background-color: #ffc107;
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button.btn:hover {
+      background-color: #e0a800;
+    }
+
+    /* 6) Suggestions dropdown */
+    #suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .suggestion-item {
+      padding: 10px;
+      background-color: #fff;
+      color: #000;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .suggestion-item:hover {
+      background-color: #f0f0f0;
+    }
+
+    /* 7) Recommendation list items */
+    .list-group-item {
+      background-color: #444;
+      border-color: #666;
+      color: #fff;
+      margin-bottom: 0.5rem;
+      border-radius: 6px;
+      padding: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Find Courses You'll Love</h1>
+
+    <!-- Search Form -->
+    <form method="post" action="/">
+      <div class="form-group position-relative">
+        <input
+          type="text"
+          class="form-control"
+          id="query"
+          name="query"
+          placeholder="e.g. I want to learn data science"
+          autocomplete="off"
+          required
+        >
+        <ul id="suggestions" class="list-group" style="display: none;"></ul>
+      </div>
+      <button type="submit" class="btn">Search</button>
+    </form>
+
+    <!-- Recommendations Section -->
+    {% if recommendations %}
+      <hr class="bg-secondary">
+      <h2 class="mt-4">Recommended Courses:</h2>
+      <ul class="list-group">
+        {% for course in recommendations %}
+          <li class="list-group-item">
+            <h4>{{ course.course_title }}</h4>
+            <p>
+              <a href="{{ course.course_url }}" target="_blank">
+                {{ course.course_url }}
+              </a>
+            </p>
+          </li>
+        {% endfor %}
+      </ul>
+    {% elif recommendations is defined and recommendations|length == 0 %}
+      <p class="text-center text-warning mt-4">
+        No recommendations found. Please try a different query.
+      </p>
+    {% endif %}
+  </div>
+
+  <!-- jQuery for AJAX suggestions -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(function() {
+      const $suggestions = $('#suggestions');
+      $('#query').on('keyup', function() {
+        const q = $(this).val().trim();
+        if (q.length > 1) {
+          $.getJSON('/suggest', { q }, function(data) {
+            if (data.length) {
+              $suggestions.html(
+                data.map(item =>
+                  `<li class="list-group-item suggestion-item">${item}</li>`
+                ).join('')
+              ).show();
+            } else {
+              $suggestions.hide();
+            }
+          });
+        } else {
+          $suggestions.hide();
+        }
+      });
+
+      $(document).on('click', '.suggestion-item', function() {
+        $('#query').val($(this).text());
+        $suggestions.hide();
+      });
+
+      $(document).click(function(e) {
+        if (!$(e.target).closest('.position-relative').length) {
+          $suggestions.hide();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+/* static/style.css */
+
+body {
+    margin: 0;
+    padding-top: 50px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-image: url('https://images.unsplash.com/photo-1584697964404-cd6c853be176?auto=format&fit=crop&w=1950&q=80');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    color: #fff;
+    min-height: 100vh;
+  }
+  
+  .container {
+    max-width: 800px;
+    background-color: rgba(0, 0, 0, 0.85);
+    padding: 30px;
+    border-radius: 10px;
+    margin: auto;
+  }
+  
+  h1, h2, h4 {
+    color: #ffc107;
+  }
+  
+  .form-control {
+    background-color: #fff;
+    color: #000;
+  }
+  
+  .suggestion-item {
+    cursor: pointer;
+    background-color: #fff;
+    color: #000;
+  }
+  
+  .list-group-item {
+    background-color: #444;
+    border-color: #666;
+    color: #fff;
+  }
+  
+  a {
+    color: #17a2b8;
+  }
+  
