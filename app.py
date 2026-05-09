@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import pandas as pd
 from model.recommender import get_recommendations
 
+
 app = Flask(__name__)
 
 # Load dataset (make sure the CSV has been processed with normalized columns)
